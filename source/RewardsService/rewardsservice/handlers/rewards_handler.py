@@ -1,15 +1,13 @@
 import json
 import tornado.web
 
-from pymongo import MongoClient
 from tornado.gen import coroutine
-
+from orchestration.rewards_orchestrator import Rewards_Orchestrator
 
 class RewardsHandler(tornado.web.RequestHandler):
 
     @coroutine
     def get(self):
-        client = MongoClient("mongodb", 27017)
-        db = client["Rewards"]
-        rewards = list(db.rewards.find({}, {"_id": 0}))
+        rewards = yield Rewards_Orchestrator.get_instance().get_reward()
         self.write(json.dumps(rewards))
+        self.finish()
