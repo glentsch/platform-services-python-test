@@ -6,15 +6,17 @@ import tornado.ioloop
 import tornado.web
 
 from tornado.options import options
-
-from settings import settings
-from url_patterns import url_patterns
+from motor.motor_tornado import MotorClient
+from settings import settings, connection_settings
+from url_patterns import url_patterns, orchestrators
 
 
 class App(tornado.web.Application):
     def __init__(self, urls):
         self.logger = logging.getLogger(self.__class__.__name__)
-
+        db_client = MotorClient(connection_settings['db_host'], connection_settings['db_port'])
+        db_client = db_client[connection_settings['db_name']]
+        [ochestrator(db_client) for ochestrator in orchestrators]
         tornado.web.Application.__init__(self, urls, **settings)
 
 app = App(url_patterns)

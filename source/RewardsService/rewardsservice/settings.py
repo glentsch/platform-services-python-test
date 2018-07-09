@@ -14,5 +14,13 @@ define("port", default=7050, help="run on the given port", type=int)
 settings = {
     'debug': True,
     'static_path': STATIC_ROOT,
+    'autoreload' : True,
     'template_loader': tornado.template.Loader(TEMPLATE_ROOT)
 }
+
+connection_settings = {
+    'db_host' : 'mongodb',
+    'db_port' : 27017,
+    'db_name' : "Rewards"
+}
+
