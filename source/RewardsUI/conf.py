@@ -1,0 +1,1 @@
+SERVER_URL = 'http://rewardsservice:7050/'
