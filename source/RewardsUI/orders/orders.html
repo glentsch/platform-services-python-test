@@ -1,0 +1,38 @@
+<html>
+<head>
+</head>
+<body>
+    <h1>Previous Orders</h1>
+    <div>
+        <h2>Orders</h2>
+        <table border="1">
+            <tr>
+                <th>E-mail</th>
+                <th>Total<th>
+            </tr>
+            {% for order in orders_data %}
+                <tr>
+                    <td>{{ order.email }}</td>
+                    <td>{{ order.total }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <hr>
+    </div>
+    <div>
+        <h2>Add orders</h2>
+        <form action="/orders/" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit" />
+        </form>
+        <hr>
+    </div>
+    <div>
+        {% if order %}
+            <h3>Congratulations! You now have {{ order.points }} points</h3>
+            <div>You are on tier {{ order.tier }} and are {{ order.n_tier_progress }}% away from your next tier: {{ order.n_tier_name }}, and will be awarded with {{ order.n_tier_reward }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>
