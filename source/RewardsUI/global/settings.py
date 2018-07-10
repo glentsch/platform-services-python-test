@@ -25,7 +25,7 @@ SECRET_KEY = 'qsaa)v5q(+3a$iw^%49&%*$zkke3wtrs5&#+b+8pmd(aiulm21'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.99.100']
 
 
 # Application definition
@@ -54,7 +54,7 @@ ROOT_URLCONF = 'global.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'rewards')],
+        'DIRS': [os.path.join(BASE_DIR, 'rewards'), os.path.join(BASE_DIR, 'orders')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,3 +118,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
