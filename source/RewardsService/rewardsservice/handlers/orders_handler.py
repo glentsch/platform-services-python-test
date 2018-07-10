@@ -10,10 +10,11 @@ from orchestration.orders_orchestrator import Orders_Orchestrator
 class OrdersHandler(tornado.web.RequestHandler):
 
     @coroutine
-    def get(self):
-        pass
+    def get(self, email=None):
+        data = yield Orders_Orchestrator.get_instance().get(email)
+        self.write(json.dumps(data))
     @coroutine
-    def post(self):
+    def post(self, email=None):
         def validate(obj):
             schema = {"email": "str", "total":"float"}
             return Validator.validate(schema, obj)

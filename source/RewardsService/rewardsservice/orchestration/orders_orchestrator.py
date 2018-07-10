@@ -24,10 +24,14 @@ class Orders_Orchestrator:
         next_reward = yield rewards_orchestrator.get_reward(customer['points'], order=1)
         if reward is not None:
             order['total'] *= (1 - reward['deduction'])
+            order['total'] = round(order['total'], 2)
+        else:
+            reward = {'points':0, 'tier':None, 'rewardName':None}
         self.db.orders.insert_one(order)
         progress = (next_reward['points'] - customer['points']) / next_reward['points']
         response_dict = { \
             "email": order['email'], \
+            "points": customer['points'], \
             "reward": reward['points'],\
             "tier": reward['tier'], \
             "tier name": reward['rewardName'], \
@@ -36,3 +40,14 @@ class Orders_Orchestrator:
             'next tier progress' : progress \
             }
         return response_dict
+    @coroutine
+    def get_all(self):
+        cursor = self.db.orders.find({}, projection={'_id':False})
+        return (yield cursor.to_list(length=None))
+    @coroutine
+    def get(self, email=None):
+        if email:
+            cursor = self.db.orders.find({'email':email}, projection={'_id':False})
+            return (yield cursor.to_list(length=None))
+        else:
+            return (yield self.get_all())

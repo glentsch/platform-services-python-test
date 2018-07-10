@@ -1,6 +1,6 @@
 from tornado.gen import coroutine
 from pymongo import ReturnDocument
-
+from orchestration.rewards_orchestrator import Rewards_Orchestrator
 class Customer_Orchestrator:
     __instance = None
     def __init__(self, db):
@@ -13,10 +13,20 @@ class Customer_Orchestrator:
         return Customer_Orchestrator.__instance
 
     @coroutine
-    def get(self, email):
-        print(email)
+    def get(self, email=None):
         if email:
+            rewards_orchestrator = Rewards_Orchestrator.get_instance()
             customer = yield self.db.customers.find_one({'email':email}, projection={'_id':False})
+            if customer:
+                reward = yield rewards_orchestrator.get_reward(points=customer['points'])
+                next_reward = yield rewards_orchestrator.get_reward(points=customer['points'], order=1)
+                nr = {
+                    'nRewardName' : next_reward['rewardName'],
+                    'nTier' : next_reward['tier'],
+                    'progress' : (next_reward['points'] - customer['points']) / next_reward['points']
+                }
+                customer.update(reward)
+                customer.update(nr)
             return customer
         else:
             return (yield self.get_all())
@@ -29,5 +39,17 @@ class Customer_Orchestrator:
 
     @coroutine
     def get_all(self):
+        rewards_orchestrator = Rewards_Orchestrator.get_instance()
         cursor = self.db.customers.find({}, projection={'_id':False})
-        return (yield cursor.to_list(length=None))
+        customers = yield cursor.to_list(length=None)
+        for customer in customers:
+            reward = yield rewards_orchestrator.get_reward(points=customer['points'])
+            next_reward = yield rewards_orchestrator.get_reward(points=customer['points'], order=1)
+            nr = {
+                'nRewardName' : next_reward['rewardName'],
+                'nTier' : next_reward['tier'],
+                'progress' : (next_reward['points'] - customer['points']) / next_reward['points']
+            }
+            customer.update(reward)
+            customer.update(nr)
+        return customers

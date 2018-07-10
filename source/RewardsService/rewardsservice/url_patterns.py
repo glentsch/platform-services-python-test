@@ -4,9 +4,9 @@ from handlers.customers_handler import CustomersHandler
 
 from orchestration import *
 url_patterns = [
-    (r'/rewards/', RewardsHandler),
-    (r'/orders/', OrdersHandler),
-    (r'/customer/(.*?)', CustomersHandler),
+    (r'/rewards/?', RewardsHandler),
+    (r'/orders/?(.*?)/?', OrdersHandler),
+    (r'/customers/?(.*?)/?', CustomersHandler),
 ]
 
 orchestrators = [
